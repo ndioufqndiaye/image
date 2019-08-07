@@ -1,6 +1,6 @@
 <?php
 
-namespace ContainerNze6ggK;
+namespace ContainerH1BPzKm;
 
 use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -619,11 +619,8 @@ class srcApp_KernelDevDebugContainer extends Container
         $f = ($this->services['vich_uploader.upload_handler'] ?? $this->getVichUploader_UploadHandlerService());
 
         $c->addEventSubscriber(new \Vich\UploaderBundle\EventListener\Doctrine\CleanListener('projet', $d, $e, $f));
-        $c->addEventSubscriber(new \Vich\UploaderBundle\EventListener\Doctrine\CleanListener('partenaire', $d, $e, $f));
         $c->addEventSubscriber(new \Vich\UploaderBundle\EventListener\Doctrine\RemoveListener('projet', $d, $e, $f));
         $c->addEventSubscriber(new \Vich\UploaderBundle\EventListener\Doctrine\UploadListener('projet', $d, $e, $f));
-        $c->addEventSubscriber(new \Vich\UploaderBundle\EventListener\Doctrine\RemoveListener('partenaire', $d, $e, $f));
-        $c->addEventSubscriber(new \Vich\UploaderBundle\EventListener\Doctrine\UploadListener('partenaire', $d, $e, $f));
         $c->addEventListener([0 => 'loadClassMetadata'], 'doctrine.orm.default_listeners.attach_entity_listeners');
 
         return $this->services['doctrine.dbal.default_connection'] = (new \Doctrine\Bundle\DoctrineBundle\ConnectionFactory([]))->createConnection(['driver' => 'pdo_mysql', 'charset' => 'utf8mb4', 'url' => $this->getEnv('resolve:DATABASE_URL'), 'host' => 'localhost', 'port' => NULL, 'user' => 'root', 'password' => NULL, 'driverOptions' => [], 'serverVersion' => '5.7', 'defaultTableOptions' => ['charset' => 'utf8mb4', 'collate' => 'utf8mb4_unicode_ci']], $a, $c, []);
@@ -1971,22 +1968,6 @@ class srcApp_KernelDevDebugContainer extends Container
                 'projet' => [
                     'uri_prefix' => '/images/projet',
                     'upload_destination' => ($this->targetDirs[3].'/public/images/projet'),
-                    'inject_on_load' => false,
-                    'delete_on_update' => true,
-                    'delete_on_remove' => true,
-                    'namer' => [
-                        'service' => NULL,
-                        'options' => NULL,
-                    ],
-                    'directory_namer' => [
-                        'service' => NULL,
-                        'options' => NULL,
-                    ],
-                    'db_driver' => 'orm',
-                ],
-                'partenaire' => [
-                    'uri_prefix' => '/images/partenaire',
-                    'upload_destination' => ($this->targetDirs[3].'/public/images/partenaire'),
                     'inject_on_load' => false,
                     'delete_on_update' => true,
                     'delete_on_remove' => true,

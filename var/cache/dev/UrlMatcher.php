@@ -9,7 +9,7 @@ return [
     false, // $matchHost
     [ // $staticRoutes
         '/ajout/image' => [[['_route' => 'image_ajoutimage', '_controller' => 'App\\Controller\\ImageController::image'], null, null, null, false, false, null]],
-        '/ajouter/partenaire' => [[['_route' => 'partenaire_new', '_controller' => 'App\\Controller\\MonController::Partenaire'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
+        '/ajouter/user' => [[['_route' => 'partenaire_new', '_controller' => 'App\\Controller\\MonController::user'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
     ],
     [ // $regexpList
         0 => '{^(?'

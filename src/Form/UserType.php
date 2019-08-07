@@ -17,7 +17,7 @@ class UserType extends AbstractType
     {
         $builder
             ->add('username')
-           # ->add('roles')
+            #->add('roles')
             ->add('password')
             ->add('matricule')
             ->add('nom')
@@ -25,7 +25,7 @@ class UserType extends AbstractType
             ->add('email')
             ->add('adresse')
             ->add('telephone')
-           # ->add('status')
+            ->add('status')
             ->add('imageFile',VichImageType::class)
             #->add('updatedAt')
             ->add('Partenaire',EntityType::class, [

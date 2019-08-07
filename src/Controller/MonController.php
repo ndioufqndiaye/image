@@ -79,4 +79,60 @@ class MonController extends AbstractController
         return new Response('partenaire  ajouté  avec succès', Response::HTTP_CREATED);
             
     }
+
+
+    /**
+     * @Route("/compte", name="partenaire_new", methods={"GET","POST"})
+     */
+    public function compte(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator): Response
+    {
+        $compte = new Compte();
+        $form = $this->createForm(CompteType::class, $compte);
+        $data = $request->request->all();
+        $form->submit($data);
+        #$compte->setSolde(0);
+        $num = rand(10000000, 99999999);
+        $compte->setNumCompte($num);
+       # $compte->setPartenaire($partenaire);
+        $compte-> setDateCreation(new \DateTime());
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $entityManager->persist($compte);
+        $entityManager->flush();
+        return new Response('compte créer  avec succès', Response::HTTP_CREATED);
+            
+    }
+
+ /**
+     * @Route("/user", name="partenaire_new", methods={"GET","POST"})
+     */
+    public function user(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator): Response
+    {
+
+        $utilisateur = new User();
+        $form = $this->createForm(UserType::class, $utilisateur);
+        $form->handleRequest($request);
+        $data = $request->request->all();
+        $form->submit($data);
+        
+        $file = $request->files->all()['imageName'];
+        $utilisateur->setImageFile($file);
+                               
+        $utilisateur->setRoles(["ROLE_ADMIN"]);
+        #$utilisateur->setStatus("activer");
+
+
+        $utilisateur->setPassword(
+            $passwordEncoder->encodePassword(
+                $utilisateur,
+                $form->get('password')->getData()
+            )
+        );
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($utilisateur);
+        $entityManager->flush();
+        return new Response('utilisateur ajouté  avec succès', Response::HTTP_CREATED);
+    }
+
 }
