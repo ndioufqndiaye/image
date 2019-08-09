@@ -13,7 +13,7 @@ return $getExpiry ? PHP_INT_MAX : Hydrator::hydrate(
                 '/compte',
             ],
             'name' => [
-                'partenaire_new',
+                'compte_new',
             ],
             'methods' => [
                 [

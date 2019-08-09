@@ -3,11 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Depot;
 use App\Entity\Compte;
 use App\Form\UserType;
+use App\Form\DepotType;
 use App\Form\CompteType;
 use App\Entity\Partenaire;
 use App\Form\PartenaireType;
+use App\Repository\CompteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,14 +19,22 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
  
     /**
-     * @Route("/ajouter")
+     * @Route("/api")
      */
 class MonController extends AbstractController
 {
+
+    private $passwordEncoder;
+
+public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+{
+  $this->passwordEncoder = $passwordEncoder;
+}
     /**
      * @Route("/partenaire", name="partenaire_new", methods={"GET","POST"})
      */
@@ -82,7 +93,7 @@ class MonController extends AbstractController
 
 
     /**
-     * @Route("/compte", name="partenaire_new", methods={"GET","POST"})
+     * @Route("/compte", name="compte_new", methods={"GET","POST"})
      */
     public function compte(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator): Response
     {
@@ -104,8 +115,8 @@ class MonController extends AbstractController
             
     }
 
- /**
-     * @Route("/user", name="partenaire_new", methods={"GET","POST"})
+    /**
+     * @Route("/user", name="user_new", methods={"GET","POST"})
      */
     public function user(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator): Response
     {
@@ -135,4 +146,71 @@ class MonController extends AbstractController
         return new Response('utilisateur ajouté  avec succès', Response::HTTP_CREATED);
     }
 
+    /**
+     * @Route("/login_check", name="login", methods={"POST"})
+     * @param JWTEncoderInterface $JWTEncoder
+     * @throws \Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTEncodeFailureException
+     */
+    public function login(Request $request, JWTEncoderInterface  $JWTEncoder)
+    { 
+   
+       $values = json_decode($request->getContent());
+        $username   = $values->username; 
+        $password   = $values->password; 
+            $repo = $this->getDoctrine()->getRepository(User::class);
+            $user = $repo-> findOneBy(['username' => $username]);
+            if(!$user){
+                return $this->json([
+                        'message' => 'Username incorrect'
+                    ]);
+            }
+
+            $isValid = $this->passwordEncoder
+            ->isPasswordValid($user, $password);
+            if(!$isValid){ 
+                return $this->json([
+                    'message' => 'Mot de passe incorect'
+                ]);
+            }
+            if($user->getStatus()=="bloquer"){
+                return $this->json([
+                    'message' => 'ACCÈS REFUSÉ vous ne pouvez pas connecter !'
+                ]);
+            }
+            $token = $JWTEncoder->encode([
+                'username' => $user->getUsername(),
+                'exp' => time() + 900000 // 1 day expiration
+            ]);
+
+            return $this->json([
+                'token' => $token
+            ]);
+    }        
+    /**
+     * @Route("/depot", name="depot_new", methods={"GET","POST"})
+     */
+    public function depot(Request $request,  EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator,CompteRepository $repo): Response
+    {
+        $depot = new Depot();      
+        $val = $request->request->all();
+
+        $form = $this->createForm(DepotType::class, $depot);
+        $form->submit($val);
+        $depot-> setDateDepot(new \DateTime());
+
+        $repo=$this->getDoctrine()->getRepository(Compte::class);
+        $compte=$repo->findOneBy(['numCompte'=>$val]);
+        $depot->setCompte($compte);
+
+        $compte->setSolde($compte->getSolde()+$depot->getMontant());
+        
+        
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($depot);
+        $entityManager->persist($compte);
+        $entityManager->flush();
+
+        return new Response('depot effectué  avec succès', Response::HTTP_CREATED);
+            
+    }
 }
