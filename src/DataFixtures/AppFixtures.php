@@ -32,7 +32,7 @@ class AppFixtures extends Fixture
         $user->setAdresse('dakar');
         $user->setTelephone(775452210);
         $user->setStatus('activer');
-        $user->setUpdatedAt(new \DateTime());
+       // $user->setUpdatedAt(new \DateTime('now'));
         $user->setImageName("ndioufa.jpg");
     
         $manager->persist($user);
