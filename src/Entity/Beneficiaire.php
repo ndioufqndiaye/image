@@ -20,20 +20,33 @@ class Beneficiaire
      */
     private $id;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $cni;
+    
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $telephone;
-
+    
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Transaction", mappedBy="beneficiaire")
      */
     private $transactions;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $cni;
+
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private $nomben;
+
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private $prenomben;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $telephoneben;
 
     public function __construct()
     {
@@ -45,29 +58,6 @@ class Beneficiaire
         return $this->id;
     }
 
-    public function getCni(): ?int
-    {
-        return $this->cni;
-    }
-
-    public function setCni(int $cni): self
-    {
-        $this->cni = $cni;
-
-        return $this;
-    }
-
-    public function getTelephone(): ?int
-    {
-        return $this->telephone;
-    }
-
-    public function setTelephone(int $telephone): self
-    {
-        $this->telephone = $telephone;
-
-        return $this;
-    }
 
     /**
      * @return Collection|Transaction[]
@@ -96,6 +86,54 @@ class Beneficiaire
                 $transaction->setBeneficiaire(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCni(): ?int
+    {
+        return $this->cni;
+    }
+
+    public function setCni(?int $cni): self
+    {
+        $this->cni = $cni;
+
+        return $this;
+    }
+
+    public function getNomben(): ?string
+    {
+        return $this->nomben;
+    }
+
+    public function setNomben(string $nomben): self
+    {
+        $this->nomben = $nomben;
+
+        return $this;
+    }
+
+    public function getPrenomben(): ?string
+    {
+        return $this->prenomben;
+    }
+
+    public function setPrenomben(string $prenomben): self
+    {
+        $this->prenomben = $prenomben;
+
+        return $this;
+    }
+
+    public function getTelephoneben(): ?int
+    {
+        return $this->telephoneben;
+    }
+
+    public function setTelephoneben(int $telephoneben): self
+    {
+        $this->telephoneben = $telephoneben;
 
         return $this;
     }

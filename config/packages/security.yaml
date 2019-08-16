@@ -38,12 +38,13 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-       - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-       - { path: ^/api,    roles: IS_AUTHENTICATED_FULLY }
+       #- { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+       #- { path: ^/api,    roles: IS_AUTHENTICATED_FULLY }
        - { path: ^/api/partenaire,   roles: ROLE_SUPER_ADMIN }
-       - { path: ^/api/depot,   roles: ROLE_CASSIER }
-       - { path: ^/api/utili,   roles: ROLE_ADMIN }
-       - { path: ^/api/utili,   roles: ROLE_SUPER_ADMIN}
+       - { path: ^/api/depot,   roles: ROLE_CAISSIER }
+       - { path: ^/api/user,   roles: ROLE_ADMIN }
+       - { path: ^/api/user,   roles: ROLE_SUPER_ADMIN}
+       - { path: ^/api/compte,   roles: ROLE_SUPER_ADMIN}
 
     # app/config/security.yml
 

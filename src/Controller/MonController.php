@@ -5,11 +5,18 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Depot;
 use App\Entity\Compte;
+use App\Entity\Tarifs;
 use App\Form\UserType;
 use App\Form\DepotType;
 use App\Form\CompteType;
+use App\Entity\Expediteur;
 use App\Entity\Partenaire;
+use App\Entity\Transaction;
+use App\Entity\Beneficiaire;
+use App\Form\ExpediteurType;
 use App\Form\PartenaireType;
+use App\Form\TransactionType;
+use App\Form\BeneficiaireType;
 use App\Repository\CompteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -130,7 +137,7 @@ public function __construct(UserPasswordEncoderInterface $passwordEncoder)
         $file = $request->files->all()['imageName'];
         $utilisateur->setImageFile($file);
                                
-        $utilisateur->setRoles(["ROLE_ADMIN"]);
+        $utilisateur->setRoles(["ROLE_CAISSIER"]);
         #$utilisateur->setStatus("activer");
 
 
@@ -191,6 +198,7 @@ public function __construct(UserPasswordEncoderInterface $passwordEncoder)
      */
     public function depot(Request $request,  EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator,CompteRepository $repo): Response
     {
+
         $depot = new Depot();      
         $val = $request->request->all();
 
@@ -200,6 +208,8 @@ public function __construct(UserPasswordEncoderInterface $passwordEncoder)
 
         $repo=$this->getDoctrine()->getRepository(Compte::class);
         $compte=$repo->findOneBy(['numCompte'=>$val]);
+        
+        if($compte){
         $depot->setCompte($compte);
 
         $compte->setSolde($compte->getSolde()+$depot->getMontant());
@@ -211,6 +221,86 @@ public function __construct(UserPasswordEncoderInterface $passwordEncoder)
         $entityManager->flush();
 
         return new Response('depot effectué  avec succès', Response::HTTP_CREATED);
-            
+
+        }else{
+
+            return new Response('numero de compte incorrect', Response::HTTP_CREATED);
+   
+        }     
     }
+
+    /**
+     * @Route("/transaction", name="transfert" ,methods={"POST"})
+     */
+    public function index(Request $request, EntityManagerInterface $entityManager )
+    {
+        $expediteur = new Expediteur();
+        $form=$this->createForm(ExpediteurType::class , $expediteur);
+        $form->handleRequest($request);
+        $data=$request->request->all();
+         $form->submit($data);
+         
+         $beneficiaire = new Beneficiaire();
+        $form=$this->createForm(BeneficiaireType::class , $beneficiaire);
+        $form->handleRequest($request);
+        $data=$request->request->all();
+         $form->submit($data);
+         
+        $transfert = new Transaction();
+        $form=$this->createForm(TransactionType::class , $transfert);
+        $form->handleRequest($request);
+        $data=$request->request->all();
+         $form->submit($data);
+        $transfert->setDatetransaction(new \Datetime());
+
+        $jour = date('d');
+        $mois = date('m');
+        $annee = date('Y');
+        $heure = date('H');
+       
+        
+        
+        $code=$jour. $mois. $annee. $heure;
+
+        $valeur=$form->get('montant')->getData();
+
+    $tarif= $this->getDoctrine()->getRepository(Tarifs::class)->findAll();
+
+    foreach($tarif as $values){
+        $values->getBorneInferieur();
+        $values->getBorneSuperieur();
+        $values->getValeur();
+        if($valeur>=$values->getBorneInferieur() && $valeur<=$values->getBorneSuperieur() ){
+           $commision=$values->getValeur();
+           $transfert->setFrais($values);
+            $envoi=($commision*10)/100;
+        }
+        
+     }
+
+ 
+        $transfert->setExpediteur($expediteur);
+        $transfert->setBeneficiaire($beneficiaire);
+        $transfert->setCode($code);
+        $user=$this->getUser();
+        $transfert->setUser($user);
+        $comp= $this->getDoctrine()->getRepository(Compte::class)->findOneBy(['Partenaire' => $user->getPartenaire()]);
+     
+
+        if($comp->getSolde() > $transfert->getMontant() ){
+       $montant= $comp->getSolde()-$transfert->getMontant()+$envoi;
+    
+
+       $comp->setSolde($montant);
+       $entityManager->persist($transfert);
+       $entityManager->persist($comp);
+       $entityManager->persist($expediteur);
+       $entityManager->persist($beneficiaire);
+       $entityManager->flush();
+
+       return new Response('Le transfert a été effectué avec succés. Voici le code : '.$transfert->getCode());
+        }else{
+            return new Response('Le solde de votre compte ne vous permet d effectuer une transaction');
+        }
+    }    
 }

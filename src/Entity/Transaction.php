@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\Tarifs;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @ApiResource()
@@ -28,10 +29,6 @@ class Transaction
      */
     private $montant;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $frais;
 
     /**
      * @ORM\Column(type="date")
@@ -39,7 +36,7 @@ class Transaction
     private $datetransaction;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
     private $code;
 
@@ -57,6 +54,23 @@ class Transaction
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="transactions")
      */
     private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="transactions")
+     */
+    private $useretrait;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Tarifs", inversedBy="transactions")
+     */
+    private $frais;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $dateretrait;
+
+   
 
     public function getId(): ?int
     {
@@ -87,17 +101,6 @@ class Transaction
         return $this;
     }
 
-    public function getFrais(): ?int
-    {
-        return $this->frais;
-    }
-
-    public function setFrais(int $frais): self
-    {
-        $this->frais = $frais;
-
-        return $this;
-    }
 
     public function getDatetransaction(): ?\DateTimeInterface
     {
@@ -111,12 +114,12 @@ class Transaction
         return $this;
     }
 
-    public function getCode(): ?int
+    public function getCode(): ?string
     {
         return $this->code;
     }
 
-    public function setCode(int $code): self
+    public function setCode(string $code): self
     {
         $this->code = $code;
 
@@ -158,4 +161,41 @@ class Transaction
 
         return $this;
     }
+    public function getUseretrait(): ?User
+    {
+        return $this->useretrait;
+    }
+
+    public function setUseretrait(?User $useretrait): self
+    {
+        $this->useretrait = $useretrait;
+
+        return $this;
+    }
+
+    public function getFrais(): ?Tarifs
+    {
+        return $this->frais;
+    }
+
+    public function setFrais(?Tarifs $frais): self
+    {
+        $this->frais = $frais;
+
+        return $this;
+    }
+
+    public function getDateretrait(): ?\DateTimeInterface
+    {
+        return $this->dateretrait;
+    }
+
+    public function setDateretrait(?\DateTimeInterface $dateretrait): self
+    {
+        $this->dateretrait = $dateretrait;
+
+        return $this;
+    }
+
+    
 }

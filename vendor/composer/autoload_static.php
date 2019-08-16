@@ -115,11 +115,13 @@ class ComposerStaticInit9a530411b04600027222e170ae8dcf9a
         ),
         'F' => 
         array (
+            'FontLib\\' => 8,
             'Fig\\Link\\' => 9,
             'FOS\\RestBundle\\' => 15,
         ),
         'D' => 
         array (
+            'Dompdf\\' => 7,
             'Doctrine\\ORM\\' => 13,
             'Doctrine\\Migrations\\' => 20,
             'Doctrine\\Instantiator\\' => 22,
@@ -419,6 +421,10 @@ class ComposerStaticInit9a530411b04600027222e170ae8dcf9a
         array (
             0 => __DIR__ . '/..' . '/lcobucci/jwt/src',
         ),
+        'FontLib\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phenx/php-font-lib/src/FontLib',
+        ),
         'Fig\\Link\\' => 
         array (
             0 => __DIR__ . '/..' . '/fig/link-util/src',
@@ -426,6 +432,10 @@ class ComposerStaticInit9a530411b04600027222e170ae8dcf9a
         'FOS\\RestBundle\\' => 
         array (
             0 => __DIR__ . '/..' . '/friendsofsymfony/rest-bundle',
+        ),
+        'Dompdf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dompdf/dompdf/src',
         ),
         'Doctrine\\ORM\\' => 
         array (
@@ -512,6 +522,17 @@ class ComposerStaticInit9a530411b04600027222e170ae8dcf9a
                 0 => __DIR__ . '/..' . '/twig/twig/lib',
             ),
         ),
+        'S' => 
+        array (
+            'Svg\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/phenx/php-svg-lib/src',
+            ),
+            'Sabberworm\\CSS' => 
+            array (
+                0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/lib',
+            ),
+        ),
         'P' => 
         array (
             'ProxyManager\\' => 
@@ -537,6 +558,12 @@ class ComposerStaticInit9a530411b04600027222e170ae8dcf9a
 
     public static $classMap = array (
         'Collator' => __DIR__ . '/..' . '/symfony/intl/Resources/stubs/Collator.php',
+        'Cpdf' => __DIR__ . '/..' . '/dompdf/dompdf/lib/Cpdf.php',
+        'HTML5_Data' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Data.php',
+        'HTML5_InputStream' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/InputStream.php',
+        'HTML5_Parser' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Parser.php',
+        'HTML5_Tokenizer' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Tokenizer.php',
+        'HTML5_TreeBuilder' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/TreeBuilder.php',
         'IntlDateFormatter' => __DIR__ . '/..' . '/symfony/intl/Resources/stubs/IntlDateFormatter.php',
         'JsonException' => __DIR__ . '/..' . '/symfony/polyfill-php73/Resources/stubs/JsonException.php',
         'Locale' => __DIR__ . '/..' . '/symfony/intl/Resources/stubs/Locale.php',

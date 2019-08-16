@@ -2,12 +2,18 @@
 
 namespace App\Controller;
 
+use Dompdf\Dompdf;
+
+// Include Dompdf required namespaces
+use Dompdf\Options;
 use App\Entity\Depot;
+
 use App\Entity\Image;
 use App\Entity\Compte;
 use App\Form\DepotType;
 use App\Form\ImageType;
 use App\Repository\UserRepository;
+use App\Repository\ImageRepository;
 use App\Repository\CompteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints\DateTime;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -24,6 +31,39 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
      */
 class ImageController extends AbstractController
 {
+/**
+     * @Route("/contrat", name="image_contrat")
+     */
+    public function index(ImageRepository $imageRepository)
+    {
+        // Configure Dompdf according to your needs
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        
+        // Instantiate Dompdf with our options
+        $dompdf = new Dompdf($pdfOptions);
+        
+        // Retrieve the HTML generated in our twig file
+        $html = $this->renderView('contrat/index.html.twig', [
+            'images' => $imageRepository ->findAll(),
+        ]);
+        
+        // Load HTML to Dompdf
+        $dompdf->loadHtml($html);
+        
+        // (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser (inline view)
+        $dompdf->stream("contrat.pdf", [
+            "Attachment" => false
+        ]);
+    }
+
+
     /**
      * @Route("/image", name="image")
      */
