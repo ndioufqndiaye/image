@@ -19,7 +19,9 @@ return [
             [['_route' => 'api_login_check'], null, null, null, false, false, null],
         ],
         '/api/depot' => [[['_route' => 'depot_new', '_controller' => 'App\\Controller\\MonController::depot'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
-        '/api/transaction' => [[['_route' => 'transfert', '_controller' => 'App\\Controller\\MonController::index'], null, ['POST' => 0], null, false, false, null]],
+        '/api/envoi' => [[['_route' => 'transfert', '_controller' => 'App\\Controller\\MonController::envoi'], null, ['POST' => 0], null, false, false, null]],
+        '/api/retrait' => [[['_route' => 'tranfert', '_controller' => 'App\\Controller\\MonController::retrait'], null, ['POST' => 0], null, false, false, null]],
+        '/api/liste' => [[['_route' => 'lister', '_controller' => 'App\\Controller\\MonController::index'], null, ['GET' => 0], null, false, false, null]],
     ],
     [ // $regexpList
         0 => '{^(?'

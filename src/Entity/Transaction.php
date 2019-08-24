@@ -70,6 +70,11 @@ class Transaction
      */
     private $dateretrait;
 
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    private $type;
+
    
 
     public function getId(): ?int
@@ -193,6 +198,18 @@ class Transaction
     public function setDateretrait(?\DateTimeInterface $dateretrait): self
     {
         $this->dateretrait = $dateretrait;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

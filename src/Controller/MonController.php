@@ -19,6 +19,7 @@ use App\Form\TransactionType;
 use App\Form\BeneficiaireType;
 use App\Repository\CompteRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\TransactionRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -230,9 +231,9 @@ public function __construct(UserPasswordEncoderInterface $passwordEncoder)
     }
 
     /**
-     * @Route("/transaction", name="transfert" ,methods={"POST"})
+     * @Route("/envoi", name="transfert" ,methods={"POST"})
      */
-    public function index(Request $request, EntityManagerInterface $entityManager )
+    public function envoi(Request $request, EntityManagerInterface $entityManager )
     {
         $expediteur = new Expediteur();
         $form=$this->createForm(ExpediteurType::class , $expediteur);
@@ -298,9 +299,69 @@ public function __construct(UserPasswordEncoderInterface $passwordEncoder)
        $entityManager->persist($beneficiaire);
        $entityManager->flush();
 
-       return new Response('Le transfert a été effectué avec succés. Voici le code : '.$transfert->getCode());
+       return new Response('Bienvenue chez wari: '.$expediteur->getPrenom(). ' '.$expediteur->getNom(). '  vous à transfert: '.$transfert->getMontant().'  Voici le code : '.$transfert->getCode());
         }else{
-            return new Response('Le solde de votre compte ne vous permet d effectuer une transaction');
+
+            return new Response('Le solde de votre compte ne vous permet d effectuer une transfert');
         }
-    }    
-}
+    }
+    
+    /**
+     * @Route("/retrait", name="tranfert" ,methods={"POST"})
+     */
+    public function retrait(Request $request, EntityManagerInterface $entityManager )
+    {        $user=$this->getUser();
+
+        $transfert = new Transaction();
+        $form=$this->createForm(TransactionType::class , $transfert);
+        $form->handleRequest($request);
+        $data=$request->request->all();
+         $form->submit($data);
+
+         $ta= $this->getDoctrine()->getRepository(Transaction::class)->findAll();
+         foreach($ta as $values){
+            $code=$values->getCode();
+            var_dump($code);die();
+         }
+        $transfert->setDateretrait(new \Datetime('now'));
+       
+       $transfert->setUseretrait($user);
+        $comp= $this->getDoctrine()->getRepository(Compte::class)->findOneBy(['Partenaire' => $user->getPartenaire()]);
+     
+
+        if($comp->getSolde() > $transfert->getMontant() ){
+       $montant=$comp->getSolde()+$transfert->getMontant()+$retrait;
+    
+
+       $comp->setSolde($montant);
+       //$entityManager->persist($transfert);
+       $entityManager->persist($comp);
+      // $entityManager->persist($beneficiaire);
+       $entityManager->flush();
+
+       return new Response('retrait effectuer avec succés');
+
+        }else{
+
+            return new Response('Le solde de votre compte ne vous permet d effectuer un retrait');
+        }
+
+    
+    }
+     /**  
+     * @Route("/liste", name="lister" ,methods={"GET"})
+     */
+
+    public function index(TransactionRepository $Repository, SerializerInterface $serializer)
+    {
+        $liste = $Repository->findAll();
+        $data = $serializer->serialize($liste, 'json');
+
+        return new Response($data, 200, [
+            'Content-Type' => 'application/json'
+        ]);
+    }
+}  
+    
+
+

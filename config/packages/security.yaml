@@ -14,9 +14,9 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        main:
-            json_login:
-                check_path: /api/login_check
+        #main:
+        #    json_login:
+        #        check_path: /api/login_check
 
         login:
             pattern:  ^/api/login
